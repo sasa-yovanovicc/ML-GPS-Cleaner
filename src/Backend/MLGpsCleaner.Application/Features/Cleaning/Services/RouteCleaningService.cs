@@ -50,7 +50,7 @@ public class RouteCleaningService : IRouteCleaningService
                 double medLat = lats[window];
                 double medLng = lngs[window];
                 double dist = Haversine(raw[i].Lat, raw[i].Lng, medLat, medLng);
-                if (dist > 100) // prag za outlier, npr. 100m
+                if (dist > 100) // outlier threshold, e.g. 100m
                     medianOutlierIdx.Add(i);
             }
         }

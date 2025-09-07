@@ -38,20 +38,19 @@ public class PositionRepository : IPositionRepository
             var mEnd = mStart.AddMonths(1);
             q = q.Where(p => p.DeviceTime >= mStart && p.DeviceTime < mEnd);
         }
-        // MySQL (Pomelo) p.DeviceTime.Date može ponekad otežati translaciju; koristimo date_trunc preko konverzije na date (DATE())
-        // EF-friendly: grupiši po komponentama (Year/Month/Day) pa konstruisi datum u memoriji
-        var aggQuery = q
+        // MySQL (Pomelo) p.DeviceTime.Date can sometimes complicate translation; use date_trunc via conversion to date (DATE())
+                // EF-friendly: group by components (Year/Month/Day) then construct date in memory
+        var grouped = await q
             .GroupBy(p => new { p.DeviceTime.Year, p.DeviceTime.Month, p.DeviceTime.Day })
             .Select(g => new { g.Key.Year, g.Key.Month, g.Key.Day, Count = g.Count() })
-            .OrderBy(r => r.Year).ThenBy(r => r.Month).ThenBy(r => r.Day);
-        var temp = await aggQuery.ToListAsync(ct);
-        var list = new List<(DateTime Date, int Count)>(temp.Count);
-        foreach (var r in temp)
+            .OrderBy(x => x.Year).ThenBy(x => x.Month).ThenBy(x => x.Day)
+            .ToListAsync(ct);
+
+        return grouped.Select(g => 
         {
-            // DateTimeKind.Utc da bi se slagalo sa ostalim vremenskim vrednostima
-            var dt = new DateTime(r.Year, r.Month, r.Day, 0,0,0, DateTimeKind.Utc);
-            list.Add((dt, r.Count));
-        }
-        return list;
+            // DateTimeKind.Utc to match other time values
+            var date = new DateTime(g.Year, g.Month, g.Day, 0, 0, 0, DateTimeKind.Utc);
+            return (date, g.Count);
+        }).ToList();
     }
 }

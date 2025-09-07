@@ -40,17 +40,17 @@ const App: React.FC = () => {
     threshold: 0.5
   });
   const updateMl = (k: keyof typeof mlParams, v: any) => setMlParams(p => ({ ...p, [k]: v }));
-  // Automatski čuvaj parametre u localStorage pri svakoj promeni
+  // Automatically save parameters to localStorage on each change
   React.useEffect(() => {
     localStorage.setItem('mlParams', JSON.stringify(mlParams));
   }, [mlParams]);
 
-  // Pokušaj geolokacije korisnika (jednokratno) – ako uspe, mapu centriramo na njega dok nema podataka
+  // Try user geolocation (once) – if successful, center map on user while no data is available
   React.useEffect(()=> {
     if (!('geolocation' in navigator)) return;
     navigator.geolocation.getCurrentPosition(
       pos => setUserCenter([pos.coords.latitude, pos.coords.longitude]),
-      () => setUserCenter([39,-98]) // fallback: približni centar SAD
+      () => setUserCenter([39,-98]) // fallback: approximate center of USA
     );
   }, []);
 
@@ -219,10 +219,10 @@ const App: React.FC = () => {
   };
   const rawLatLngs = raw.map((p:RawPoint)=> [p.lat,p.lng]) as [number,number][];
   const cleanedLatLngs = cleaned.map((p:CleanedPoint)=> [p.lat,p.lng]) as [number,number][];
-  // Prioritet centriranja:
-  // 1. Ako imamo podatke (cleaned ili raw) uzmi srednju tačku
-  // 2. Ako nemamo podatke ali imamo dozvolu za lokaciju – korisnik
-  // 3. Fallback: SAD (39,-98)
+  // Centering priority:
+  // 1. If we have data (cleaned or raw) take the middle point
+  // 2. If we have no data but have location permission – user location
+  // 3. Fallback: USA (39,-98)
   const track = (cleanedLatLngs.length? cleanedLatLngs : rawLatLngs);
   const center = track.length > 0
     ? track[Math.floor(track.length/2)]
@@ -294,7 +294,7 @@ const App: React.FC = () => {
         <div style={{display:'flex', gap:'1rem', flexWrap:'wrap', flex:'0 0 auto', minWidth:300}}>
           { [0,1,2].map(offset => renderMonth(((monthStart -1 + offset) % 12)+1)) }
         </div>
-        {/* Parametri za čišćenje rute */}
+        {/* Route cleaning parameters */}
         <div style={{flex:'1 1 320px', background:'#f3f7fa', border:'1px solid #b5c6e3', borderRadius:6, padding:'12px 14px', margin:'0 12px', boxShadow:'0 1px 2px rgba(0,0,0,0.04)'}}>
           <div style={{fontWeight:600, marginBottom:10}}>Route Cleaning Parameters</div>
           <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))', gap:'8px 12px', marginBottom:10}}>
@@ -400,14 +400,14 @@ const App: React.FC = () => {
 
 createRoot(document.getElementById('root')!).render(<App/>);
 
-// Komponenta koja automatski prilagođava mapu kada se učita nova ruta
+// Component that automatically adjusts the map when a new route is loaded
 const FitBounds: React.FC<{raw:[number,number][], cleaned:[number,number][]}> = ({raw, cleaned}) => {
   const map = useMap();
   React.useEffect(()=> {
     const pts = (cleaned.length>1 ? cleaned : raw);
     if (pts.length>1) {
       const latlngs = pts.map(p=> ({lat:p[0], lng:p[1]}));
-      // izračunaj bounds
+      // calculate bounds
       let minLat=latlngs[0].lat,maxLat=latlngs[0].lat,minLng=latlngs[0].lng,maxLng=latlngs[0].lng;
       for(const p of latlngs){
         if(p.lat<minLat)minLat=p.lat; if(p.lat>maxLat)maxLat=p.lat; if(p.lng<minLng)minLng=p.lng; if(p.lng>maxLng)maxLng=p.lng;

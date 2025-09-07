@@ -89,6 +89,3 @@ ConnectionStrings__Traccar=server=localhost;port=3306;database=traccar;user=root
 
 ## License
 MIT
-
----
-Internal architecture & roadmap moved to `docs/ARCHITECTURE_PLAN.md`.
