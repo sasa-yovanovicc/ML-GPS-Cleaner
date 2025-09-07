@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>MLGpsCleaner.Api</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MLGpsCleaner.Core\MLGpsCleaner.Core.csproj" />
+    <ProjectReference Include="..\MLGpsCleaner.Infrastructure\MLGpsCleaner.Infrastructure.csproj" />
+    <ProjectReference Include="..\MLGpsCleaner.ML\MLGpsCleaner.ML.csproj" />
+  <ProjectReference Include="..\MLGpsCleaner.Application\MLGpsCleaner.Application.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
+  </ItemGroup>
+</Project>
