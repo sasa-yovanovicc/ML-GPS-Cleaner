@@ -9,12 +9,12 @@ public interface IRouteCleaningService
 }
 
 public record RouteCleaningOptions(
-    double MaxSpeedKph = 200,
-    double MaxAccelerationKphPerSec = 30,
-    double MaxBearingChangeDegPerSec = 150,
+    double MaxSpeedKph = 120,
+    double MaxAccelerationKphPerSec = 10,
+    double MaxBearingChangeDegPerSec = 40,
     double MaxCrossTrackMeters = 80,
     int HampelWindow = 5,
     double HampelNSigma = 3.0,
     bool UseHampelOnSpeed = true,
-    double MaxJumpMeters = 500
+    double MaxJumpMeters = 300
 );

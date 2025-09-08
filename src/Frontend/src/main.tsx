@@ -400,7 +400,7 @@ const App: React.FC = () => {
 
 createRoot(document.getElementById('root')!).render(<App/>);
 
-// Component that automatically adjusts the map when a new route is loaded
+// Automatically adjusts the map when a new route is loaded
 const FitBounds: React.FC<{raw:[number,number][], cleaned:[number,number][]}> = ({raw, cleaned}) => {
   const map = useMap();
   React.useEffect(()=> {
